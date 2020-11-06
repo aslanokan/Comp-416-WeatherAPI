@@ -5,9 +5,27 @@ package Comp.WeatherAPI;
 
 public class App {
     public static void main(String[] args) {
-        currentWeather weather = new currentWeather();
-        String london = weather.get("London");
-        System.out.println(london);
+        String city = "London";
+        String lat = "33.441792";
+        String lon = "-94.037689";
+        String part = "hourly,daily";
+        String layer = "clouds_new";
+        String z = "10";
+        String x = "10";
+        String y = "10";
+        String time = "1586468027";
+
+        WeatherAPI weather = new WeatherAPI();
+        String currentWeather = weather.getCurrentWeatherAt(city);
+        String dailyForecast = weather.getDailyForecast(lat, lon, part);
+        String basicWeatherMap = weather.getBasicWeatherMap(layer, z, x, y);
+        String minuteForecast = weather.getMinuteForecast(lat, lon, part);
+        String historicalWeather = weather.getHistoricalWeather(lat, lon, time);
+        System.out.println(String.format("currentWeather = %s", currentWeather));
+        System.out.println(String.format("dailyForecast = %s", dailyForecast));
+        System.out.println(String.format("basicWeatherMap = %s", basicWeatherMap));
+        System.out.println(String.format("minuteForecast = %s", minuteForecast));
+        System.out.println(String.format("historicalWeather = %s", historicalWeather));
     }
 
     public String getGreeting() {
