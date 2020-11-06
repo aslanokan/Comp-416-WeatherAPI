@@ -3,12 +3,15 @@ package Comp.WeatherAPI;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.*;
 
 public class WeatherAPI {
     OkHttpClient client = new OkHttpClient();
-    String apiKey = "3594f040713ccb30867ac095357b9c79";
+    Dotenv dotenv = Dotenv.load();
+
+    String apiKey = dotenv.get("apiKey");
 
     public String get(String url) throws IOException {
         Request request = new Request.Builder()
