@@ -3,17 +3,11 @@
  */
 package Comp.WeatherAPI;
 
-import net.aksingh.owmjapis.api.APIException;
-
 public class App {
     public static void main(String[] args) {
-        OwmAPI owmAPI = new OwmAPI();
-        try {
-            owmAPI.test();
-        } catch (APIException e) {
-            System.out.println(e);
-        }
-        System.out.println(new App().getGreeting());
+        currentWeather weather = new currentWeather();
+        String london = weather.get("London");
+        System.out.println(london);
     }
 
     public String getGreeting() {
