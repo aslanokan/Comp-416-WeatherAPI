@@ -3,34 +3,61 @@
  */
 package Comp.WeatherAPI;
 
+import okhttp3.Response;
+
 public class App {
+    static WeatherAPI weatherAPI = new WeatherAPI();
+
     public static void main(String[] args) {
         String city = "London";
         String lat = "33.441792";
         String lon = "-94.037689";
         String part = "hourly,daily";
         String layer = "clouds_new";
-        String z = "10";
-        String x = "10";
-        String y = "10";
+        String z = "0";
+        String x = "0";
+        String y = "0";
 
         DateUtils dateUtils = new DateUtils();
         String date = dateUtils.getDaysAgoInSecond(4);
-        System.out.println(String.format("4 days ago in ms = %s", date));
         String time = date;
 
+        getBasicWeatherMap(layer, z, x, y);
+        getMinuteForecast(lat, lon, part);
+        getDailyForecast(lat, lon, part);
+        getHistoricalWeather(lat, lon, time);
+        getCurrentWeatherAt(city);
+    }
 
-        WeatherAPI weather = new WeatherAPI();
-        String currentWeather = weather.getCurrentWeatherAt(city);
-        String dailyForecast = weather.getDailyForecast(lat, lon, part);
-        String minuteForecast = weather.getMinuteForecast(lat, lon, part);
-        String historicalWeather = weather.getHistoricalWeather(lat, lon, time);
+    public static String getCurrentWeatherAt(String city) {
+        String currentWeather = weatherAPI.getCurrentWeatherAt(city);
         System.out.println(String.format("currentWeather = %s", currentWeather));
-        System.out.println(String.format("dailyForecast = %s", dailyForecast));
-        System.out.println(String.format("minuteForecast = %s", minuteForecast));
-        System.out.println(String.format("historicalWeather = %s", historicalWeather));
+        return "";
+    }
 
-        weather.getBasicWeatherMap(layer, z, x, y);
+    public static String getDailyForecast(String lat, String lon, String part) {
+        String dailyForecast = weatherAPI.getDailyForecast(lat, lon, part);
+        System.out.println(String.format("dailyForecast = %s", dailyForecast));
+        return "";
+    }
+
+    public static String getBasicWeatherMap(String layer, String z, String x, String y) {
+        Response basicWeatherMapData = weatherAPI.getBasicWeatherMap(layer, z, x, y);
+        FileUtils fileUtils = new FileUtils();
+        fileUtils.saveData(basicWeatherMapData, "test.png");
+        return "";
+    }
+
+    public static String getMinuteForecast(String lat, String lon, String part) {
+        String minuteForecast = weatherAPI.getMinuteForecast(lat, lon, part);
+        System.out.println(String.format("minuteForecast = %s", minuteForecast));
+        return "";
+    }
+
+    public static String getHistoricalWeather(String lat, String lon, String time) {
+        String historicalWeather = weatherAPI.getHistoricalWeather(lat, lon, time);
+        System.out.println(String.format("historicalWeather = %s", historicalWeather));
+        return "";
     }
 
     public String getGreeting() {
