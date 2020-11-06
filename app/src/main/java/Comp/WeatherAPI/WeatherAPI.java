@@ -8,7 +8,7 @@ import java.io.*;
 
 public class WeatherAPI {
     OkHttpClient client = new OkHttpClient();
-    String apiKey = "";
+    String apiKey = "3594f040713ccb30867ac095357b9c79";
 
     public String get(String url) throws IOException {
         Request request = new Request.Builder()

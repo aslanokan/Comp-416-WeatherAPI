@@ -7,11 +7,12 @@ import okhttp3.Response;
 
 public class App {
     static WeatherAPI weatherAPI = new WeatherAPI();
+    static FileUtils fileUtils = new FileUtils();
 
     public static void main(String[] args) {
         String city = "London";
-        String lat = "33.441792";
-        String lon = "-94.037689";
+        String lat = "0";
+        String lon = "0";
         String part = "hourly,daily";
         String layer = "clouds_new";
         String z = "0";
@@ -30,34 +31,38 @@ public class App {
     }
 
     public static String getCurrentWeatherAt(String city) {
+        String filename = String.format("currentWeather-%s", city);
         String currentWeather = weatherAPI.getCurrentWeatherAt(city);
-        System.out.println(String.format("currentWeather = %s", currentWeather));
-        return "";
+        fileUtils.saveJSON(currentWeather, filename);
+        return filename;
     }
 
     public static String getDailyForecast(String lat, String lon, String part) {
+        String filename = String.format("dailyForecast-%s-%s-%s", lat, lon, part);
         String dailyForecast = weatherAPI.getDailyForecast(lat, lon, part);
-        System.out.println(String.format("dailyForecast = %s", dailyForecast));
-        return "";
+        fileUtils.saveJSON(dailyForecast, filename);
+        return filename;
     }
 
     public static String getBasicWeatherMap(String layer, String z, String x, String y) {
+        String filename = String.format("basicWeatherMapData-%s-%s-%s-%s", layer, z, x, y);
         Response basicWeatherMapData = weatherAPI.getBasicWeatherMap(layer, z, x, y);
-        FileUtils fileUtils = new FileUtils();
-        fileUtils.saveData(basicWeatherMapData, "test.png");
-        return "";
+        fileUtils.saveData(basicWeatherMapData, filename);
+        return filename;
     }
 
     public static String getMinuteForecast(String lat, String lon, String part) {
+        String filename = String.format("minuteForecast-%s-%s-%s", lat, lon, part);
         String minuteForecast = weatherAPI.getMinuteForecast(lat, lon, part);
-        System.out.println(String.format("minuteForecast = %s", minuteForecast));
-        return "";
+        fileUtils.saveJSON(minuteForecast, filename);
+        return filename;
     }
 
     public static String getHistoricalWeather(String lat, String lon, String time) {
+        String filename = String.format("historicalWeather-%s-%s-%s", lat, lon, time);
         String historicalWeather = weatherAPI.getHistoricalWeather(lat, lon, time);
-        System.out.println(String.format("historicalWeather = %s", historicalWeather));
-        return "";
+        fileUtils.saveJSON(historicalWeather, filename);
+        return filename;
     }
 
     public String getGreeting() {
