@@ -44,15 +44,17 @@ public class WeatherAPI {
         }
     }
 
-    public String getBasicWeatherMap(String layer, String z, String x, String y) {
+    public void getBasicWeatherMap(String layer, String z, String x, String y) {
         String url = String.format("https://tile.openweathermap.org/map/%s/%s/%s/%s.png?appid=%s", layer, z, x, y, apiKey);
         try {
-            WeatherAPI api = new WeatherAPI();
-            String data = api.get(url);
-            return data;
+            Request request = new Request.Builder().url(url).build();
+            Response response = client.newCall(request).execute();
+
+            FileOutputStream fos = new FileOutputStream("test.png");
+            fos.write(response.body().bytes());
+            fos.close();
         } catch (IOException e) {
             System.out.println(e);
-            return "";
         }
     }
 

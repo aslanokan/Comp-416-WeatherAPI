@@ -14,23 +14,23 @@ public class App {
         String x = "10";
         String y = "10";
 
-        DateHelper dateHelper = new DateHelper();
-        String date = dateHelper.getDaysAgoInSecond(4);
+        DateUtils dateUtils = new DateUtils();
+        String date = dateUtils.getDaysAgoInSecond(4);
         System.out.println(String.format("4 days ago in ms = %s", date));
         String time = date;
+
 
         WeatherAPI weather = new WeatherAPI();
         String currentWeather = weather.getCurrentWeatherAt(city);
         String dailyForecast = weather.getDailyForecast(lat, lon, part);
-        String basicWeatherMap = weather.getBasicWeatherMap(layer, z, x, y);
         String minuteForecast = weather.getMinuteForecast(lat, lon, part);
         String historicalWeather = weather.getHistoricalWeather(lat, lon, time);
         System.out.println(String.format("currentWeather = %s", currentWeather));
         System.out.println(String.format("dailyForecast = %s", dailyForecast));
-        System.out.println(String.format("basicWeatherMap = %s", basicWeatherMap));
         System.out.println(String.format("minuteForecast = %s", minuteForecast));
         System.out.println(String.format("historicalWeather = %s", historicalWeather));
 
+        weather.getBasicWeatherMap(layer, z, x, y);
     }
 
     public String getGreeting() {

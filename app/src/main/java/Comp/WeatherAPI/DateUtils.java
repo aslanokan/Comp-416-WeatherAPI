@@ -4,7 +4,7 @@ import java.time.ZoneId;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-public class DateHelper {
+public class DateUtils {
 
     public String getDaysAgoInSecond(int daysAgo) {
         ZonedDateTime startOfToday = LocalDate.now().atStartOfDay(ZoneId.systemDefault());
