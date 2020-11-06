@@ -13,7 +13,11 @@ public class App {
         String z = "10";
         String x = "10";
         String y = "10";
-        String time = "1586468027";
+
+        DateHelper dateHelper = new DateHelper();
+        String date = dateHelper.getDaysAgoInSecond(4);
+        System.out.println(String.format("4 days ago in ms = %s", date));
+        String time = date;
 
         WeatherAPI weather = new WeatherAPI();
         String currentWeather = weather.getCurrentWeatherAt(city);
@@ -26,6 +30,7 @@ public class App {
         System.out.println(String.format("basicWeatherMap = %s", basicWeatherMap));
         System.out.println(String.format("minuteForecast = %s", minuteForecast));
         System.out.println(String.format("historicalWeather = %s", historicalWeather));
+
     }
 
     public String getGreeting() {
