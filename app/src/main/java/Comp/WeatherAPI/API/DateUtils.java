@@ -1,4 +1,4 @@
-package Comp.WeatherAPI;
+package Comp.WeatherAPI.API;
 
 import java.time.ZoneId;
 import java.time.LocalDate;

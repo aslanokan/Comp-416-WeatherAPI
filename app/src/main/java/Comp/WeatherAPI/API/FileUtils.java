@@ -1,4 +1,4 @@
-package Comp.WeatherAPI;
+package Comp.WeatherAPI.API;
 
 import okhttp3.Response;
 
