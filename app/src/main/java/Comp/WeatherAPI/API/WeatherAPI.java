@@ -11,7 +11,7 @@ public class WeatherAPI {
     OkHttpClient client = new OkHttpClient();
     Dotenv dotenv = Dotenv.load();
 
-    String apiKey = dotenv.get("apiKey");
+    String apiKey = dotenv.get("API_KEY");
 
     public String get(String url) throws IOException {
         Request request = new Request.Builder()

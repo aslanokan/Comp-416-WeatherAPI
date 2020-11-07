@@ -1,10 +1,12 @@
 package Comp.WeatherAPI;
 
 import Comp.WeatherAPI.Server.*;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class App {
     public static void main(String[] args) {
-        Server server = new Server(Server.DEFAULT_SERVER_PORT);
+        Dotenv dotenv = Dotenv.load();
+        Server server = new Server(Integer.parseInt(dotenv.get("PORT")));
     }
 
     public String getGreeting() {

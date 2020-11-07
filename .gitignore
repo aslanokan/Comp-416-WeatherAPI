@@ -8,4 +8,6 @@ build
 
 .DS_Store
 
-app/.env
+app/src/main/java/.env
+
+out

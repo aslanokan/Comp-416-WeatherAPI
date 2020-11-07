@@ -7,68 +7,57 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 class ServerThread extends Thread {
-    protected BufferedReader is;
-    protected PrintWriter os;
-    protected Socket s;
+    protected BufferedReader inputStream;
+    protected PrintWriter outputStream;
+    protected Socket socket;
     private String line = "";
     private String lines = "";
 
-    /**
-     * Creates a server thread on the input socket
-     *
-     * @param s input socket to create a thread on
-     */
-    public ServerThread(Socket s) {
-        this.s = s;
+    public ServerThread(Socket socket) {
+        this.socket = socket;
     }
 
-    /**
-     * The server thread, echos the client until it receives the QUIT string from the client
-     */
     public void run() {
         try {
-            is = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            os = new PrintWriter(s.getOutputStream());
-
+            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            outputStream = new PrintWriter(socket.getOutputStream());
         } catch (IOException e) {
             System.err.println("Server Thread. Run. IO error in server thread");
         }
 
         try {
-            line = is.readLine();
+            line = inputStream.readLine();
             while (line.compareTo("QUIT") != 0) {
                 lines = "Client messaged : " + line + " at  : " + Thread.currentThread().getId();
-                os.println(lines);
-                os.flush();
-                System.out.println("Client " + s.getRemoteSocketAddress() + " sent :  " + lines);
-                line = is.readLine();
+                outputStream.println(lines);
+                outputStream.flush();
+                System.out.println("Client " + socket.getRemoteSocketAddress() + " sent :  " + lines);
+                line = inputStream.readLine();
             }
         } catch (IOException e) {
-            line = this.getName(); //reused String line for getting thread name
+            line = this.getName();
             System.err.println("Server Thread. Run. IO Error/ Client " + line + " terminated abruptly");
         } catch (NullPointerException e) {
-            line = this.getName(); //reused String line for getting thread name
+            line = this.getName();
             System.err.println("Server Thread. Run.Client " + line + " Closed");
         } finally {
             try {
                 System.out.println("Closing the connection");
-                if (is != null) {
-                    is.close();
+                if (inputStream != null) {
+                    inputStream.close();
                     System.err.println(" Socket Input Stream Closed");
                 }
-
-                if (os != null) {
-                    os.close();
+                if (outputStream != null) {
+                    outputStream.close();
                     System.err.println("Socket Out Closed");
                 }
-                if (s != null) {
-                    s.close();
+                if (socket != null) {
+                    socket.close();
                     System.err.println("Socket Closed");
                 }
-
             } catch (IOException ie) {
                 System.err.println("Socket Close Error");
             }
-        }//end finally
+        }
     }
 }
