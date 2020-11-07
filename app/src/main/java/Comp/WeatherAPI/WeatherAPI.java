@@ -35,8 +35,8 @@ public class WeatherAPI {
         }
     }
 
-    public String getDailyForecast(String lat, String lon, String part) {
-        String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&exclude=%s&appid=%s", lat, lon, part, apiKey);
+    public String getDailyForecast(String lat, String lon) {
+        String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&exclude=%s&appid=%s", lat, lon, "hourly", apiKey);
         try {
             WeatherAPI api = new WeatherAPI();
             String data = api.get(url);
@@ -59,8 +59,8 @@ public class WeatherAPI {
         }
     }
 
-    public String getMinuteForecast(String lat, String lon, String part) {
-        String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&exclude=%s&appid=%s", lat, lon, part, apiKey);
+    public String getMinuteForecast(String lat, String lon) {
+        String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&exclude=%s&appid=%s", lat, lon, "daily", apiKey);
         try {
             WeatherAPI api = new WeatherAPI();
             String data = api.get(url);
