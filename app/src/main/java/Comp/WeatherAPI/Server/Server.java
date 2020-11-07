@@ -27,8 +27,8 @@ public class Server {
         try {
             socket = serverSocket.accept();
             System.out.println("A connection was established with a client on the address of " + socket.getRemoteSocketAddress());
-            ServerThread st = new ServerThread(socket);
-            st.start();
+            ServerThread serverThread = new ServerThread(socket);
+            serverThread.start();
 
         } catch (Exception e) {
             e.printStackTrace();

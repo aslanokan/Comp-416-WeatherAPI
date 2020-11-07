@@ -10,25 +10,6 @@ public class API {
     static FileUtils fileUtils = new FileUtils();
     static DateUtils dateUtils = new DateUtils();
 
-//    public static void main(String[] args) {
-//        String city = "London";
-//        String lat = "0";
-//        String lon = "0";
-//        String layer = "clouds_new";
-//        String z = "0";
-//        String x = "0";
-//        String y = "0";
-//
-//        String date = dateUtils.getDaysAgoInSecond(4);
-//        String time = date;
-//
-//        getBasicWeatherMap(layer, z, x, y);
-//        getMinuteForecast(lat, lon);
-//        getDailyForecast(lat, lon);
-//        getHistoricalWeather(lat, lon, time);
-//        getCurrentWeatherAt(city);
-//    }
-
     public static String getCurrentWeatherAt(String city) {
         String filename = String.format("currentWeather-%s-%s", city, dateUtils.getDate());
         String currentWeather = weatherAPI.getCurrentWeatherAt(city);
