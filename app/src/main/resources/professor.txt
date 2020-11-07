@@ -1,0 +1,8 @@
+What class do you teach?
+comp 416
+What is your research area?
+computer networks
+What is the first name of your main ta for this course?
+ahnaf
+What is the name of your colleague who leads ParCore lab?
+didem

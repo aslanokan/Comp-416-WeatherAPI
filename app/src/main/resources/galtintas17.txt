@@ -1,0 +1,12 @@
+What is your favorite color?
+blue
+What is the first name of your favorite author?
+jose
+In which city you were born?
+izmir
+What is the name of your best friend?
+idil
+How old are you?
+22
+How many siblings do you have?
+0
