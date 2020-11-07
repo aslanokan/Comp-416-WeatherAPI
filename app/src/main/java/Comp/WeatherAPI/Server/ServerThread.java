@@ -7,11 +7,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 class ServerThread extends Thread {
+
     protected BufferedReader inputStream;
     protected PrintWriter outputStream;
     protected Socket socket;
     private String line = "";
     private String lines = "";
+    private Authentication auth;
 
     public ServerThread(Socket socket) {
         this.socket = socket;
@@ -26,13 +28,35 @@ class ServerThread extends Thread {
         }
 
         try {
+            auth = Authentication.getInstance();
             line = inputStream.readLine();
-            while (line.compareTo("QUIT") != 0) {
-                lines = "Client messaged : " + line + " at  : " + Thread.currentThread().getId();
-                outputStream.println(lines);
+
+            String[] linesValues = line.split(AuthenticationMessages.DELIMITER);
+            String username = linesValues[linesValues.length - 1];
+
+            if (line.compareTo("QUIT") != 0) {
+                if (!auth.validateUser(username)) {
+                    outputStream.println(AuthenticationMessages.Auth_Fail + AuthenticationMessages.DELIMITER + "User doesn't exist.");
+                    outputStream.flush();
+                    return;
+                }
+                Authentication.AuthenticationResult authRes = auth.authorize(username, this);
+                boolean authenticated = authRes.authenticated;
+                outputStream.println(authRes.result + AuthenticationMessages.DELIMITER + authRes.customMessage);
                 outputStream.flush();
-                System.out.println("Client " + socket.getRemoteSocketAddress() + " sent :  " + lines);
-                line = inputStream.readLine();
+
+                if (!authenticated) {
+                    return;
+                } else {
+                    outputStream.println(AuthenticationMessages.Auth_Success + AuthenticationMessages.DELIMITER);
+                    while (line.compareTo("QUIT") != 0) {
+                        lines = "Client messaged : " + line + " at  : " + Thread.currentThread().getId();
+                        outputStream.println(lines);
+                        outputStream.flush();
+                        System.out.println("Client " + socket.getRemoteSocketAddress() + " sent :  " + lines);
+                        line = inputStream.readLine();
+                    }
+                }
             }
         } catch (IOException e) {
             line = this.getName();
