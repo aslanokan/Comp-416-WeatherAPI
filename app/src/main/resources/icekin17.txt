@@ -1,0 +1,8 @@
+What is your cat's name?
+muffin
+How old are you?
+21
+Where are you from?
+antalya
+What is your major?
+industrial engineering

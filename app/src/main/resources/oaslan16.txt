@@ -1,0 +1,12 @@
+What is your favorite color?
+red
+What is the first name of your favorite author?
+yusuf
+In which city you were born?
+artvin
+What is the name of your flat mate?
+gokhan
+How many siblings do you have?
+1
+What was the name of your Comp 302 group?
+guidance

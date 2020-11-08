@@ -10,7 +10,7 @@ import java.net.Socket;
 public class Server {
     private final ServerSocket serverSocket;
 
-    public Server(int port) {
+    public Server(int port, int mode) {
         try {
             serverSocket = new ServerSocket(port);
             System.out.println("Opened up a server socket on " + Inet4Address.getLocalHost() + ":" + port);
@@ -19,16 +19,18 @@ public class Server {
             System.err.println("Server class.Constructor exception on opening a server socket");
         }
         while (true) {
-            ListenAndAccept();
+            ListenAndAccept(mode);
         }
     }
 
-    private void ListenAndAccept() {
+
+
+    private void ListenAndAccept(int mode) {
         Socket socket;
         try {
             socket = serverSocket.accept();
             System.out.println("A connection was established with a client on the address of " + socket.getRemoteSocketAddress());
-            ServerThread serverThread = new ServerThread(socket);
+            ServerThread serverThread = new ServerThread(socket, mode);
             serverThread.start();
 
         } catch (Exception e) {

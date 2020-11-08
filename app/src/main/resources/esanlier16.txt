@@ -1,0 +1,8 @@
+What is your favorite color?
+green
+What is the first name of your favorite author?
+john
+How old are you?
+22
+When did you start college?
+2016
