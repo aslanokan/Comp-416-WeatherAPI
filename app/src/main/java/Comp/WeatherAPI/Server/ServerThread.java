@@ -1,17 +1,16 @@
 package Comp.WeatherAPI.Server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import io.github.cdimascio.dotenv.Dotenv;
+
+import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 class ServerThread extends Thread {
 
-    protected BufferedReader inputStream;
-    protected PrintWriter outputStream;
+    protected DataInputStream inputStream;
+    protected DataOutputStream outputStream;
     protected Socket socket;
-    private String line = "";
     private String lines = "";
     private Authentication auth;
 
@@ -21,49 +20,41 @@ class ServerThread extends Thread {
 
     public void run() {
         try {
-            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outputStream = new PrintWriter(socket.getOutputStream());
+            inputStream = new DataInputStream(socket.getInputStream());
+            outputStream = new DataOutputStream(socket.getOutputStream());
+            System.out.println("IO successfully initiated");
         } catch (IOException e) {
             System.err.println("Server Thread. Run. IO error in server thread");
         }
 
         try {
             auth = Authentication.getInstance();
-            line = inputStream.readLine();
 
-            String[] linesValues = line.split(AuthenticationMessages.DELIMITER);
-            String username = linesValues[linesValues.length - 1];
+            String username = TCP.readAuthUsernameOrAnswer(inputStream);
+            assert username != null;
 
-            if (line.compareTo("QUIT") != 0) {
-                if (!auth.validateUser(username)) {
-                    outputStream.println(AuthenticationMessages.Auth_Fail + AuthenticationMessages.DELIMITER + "User doesn't exist.");
-                    outputStream.flush();
-                    return;
-                }
-                Authentication.AuthenticationResult authRes = auth.authorize(username, this);
-                boolean authenticated = authRes.authenticated;
-                outputStream.println(authRes.result + AuthenticationMessages.DELIMITER + authRes.customMessage);
-                outputStream.flush();
+            if (!auth.validateUser(username)) {
+                TCP.writeAuthMessage(outputStream, AuthenticationMessages.Auth_Fail, "User doesn't exist.");
+                return;
+            }
+            Authentication.AuthenticationResult authRes = auth.authorize(username, this);
+            boolean authenticated = authRes.authenticated;
+            TCP.writeAuthMessage(outputStream, authRes.result, authRes.customMessage); // Sending token or fail depends on auth
+            //If auth successful, move on
+            if (authenticated) {
+                //From now on we should only receive query requests
+                ServerSocket dataSocket = new ServerSocket(0); // Available random port
+                TCP.passDataSocketInfo(outputStream, dataSocket.getLocalPort());
+                // A while can be added here
+                String query = TCP.readQuery(inputStream);
 
-                if (!authenticated) {
-                    return;
-                } else {
-                    outputStream.println(AuthenticationMessages.Auth_Success + AuthenticationMessages.DELIMITER);
-                    while (line.compareTo("QUIT") != 0) {
-                        lines = "Client messaged : " + line + " at  : " + Thread.currentThread().getId();
-                        outputStream.println(lines);
-                        outputStream.flush();
-                        System.out.println("Client " + socket.getRemoteSocketAddress() + " sent :  " + lines);
-                        line = inputStream.readLine();
-                    }
-                }
+
             }
         } catch (IOException e) {
-            line = this.getName();
-            System.err.println("Server Thread. Run. IO Error/ Client " + line + " terminated abruptly");
+
+            System.err.println("Server Thread. Run. IO Error/ Client " + this.getName() + " terminated abruptly");
         } catch (NullPointerException e) {
-            line = this.getName();
-            System.err.println("Server Thread. Run.Client " + line + " Closed");
+            System.err.println("Server Thread. Run.Client " + this.getName() + " Closed");
         } finally {
             try {
                 System.out.println("Closing the connection");

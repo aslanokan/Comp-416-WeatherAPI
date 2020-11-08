@@ -17,7 +17,7 @@ public class Authentication {
     private Authentication() {
     }
 
-    public static Authentication getInstance() {
+    synchronized public static Authentication getInstance() {
         if (authentication == null)
             authentication = new Authentication();
         return authentication;
@@ -28,15 +28,21 @@ public class Authentication {
      */
     public boolean validateUser(String username) {
 
+        System.out.println("Received auth request: " + username);
         username += ".txt";
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            File userFile = new File(classLoader.getResource(username).getFile());
+            File userFile = new File("users/" + username);
             return userFile.exists();
         } catch (NullPointerException e) {
             return false;
         }
     }
+
+    public boolean validateSession(String token) {
+        return Sessions.getInstance().validateSession(token);
+    }
+
 
     /*** given the username, looksup and loads the contents of the authentication details related to this user to a HashMap **/
     private HashMap<String, String> loadUserDetails(String username) {
@@ -70,14 +76,16 @@ public class Authentication {
      * asks random number of questions
      */
     public AuthenticationResult authorize(String username, ServerThread st) {
-
+        //return new AuthenticationResult(AuthenticationMessages.Auth_Success, "Pass granted, REMOVE THIS FROM Authentication.class", true);
 //        if (!validateUser(username)) {
 //            System.out.println("User doesn't exist in the database.");
 //            return false;
 //        }
+
         String cause = "";
         AuthenticationResult authRes = new AuthenticationResult(AuthenticationMessages.Auth_Success, cause, true);
         Random rand = new Random();
+
         HashMap<String, String> userDetails = loadUserDetails(username);
         int numQuestions = min(MAX_QUESTIONS, rand.nextInt(userDetails.size()) + 1);
         List<String> allQuestions = new ArrayList<String>(userDetails.keySet());
@@ -86,19 +94,17 @@ public class Authentication {
         for (String question : questions) {
             String correctAnswer = userDetails.get(question);
             try {
-                st.outputStream.println(AuthenticationMessages.Auth_Challenge + AuthenticationMessages.DELIMITER + question);
-                st.outputStream.flush();
+                TCP.writeAuthMessage(st.outputStream, AuthenticationMessages.Auth_Challenge, question);
                 st.socket.setSoTimeout(TIMEOUT);
-                String givenAnswer = st.inputStream.readLine();
-                String[] givenAnswers = givenAnswer.split(AuthenticationMessages.DELIMITER);
-                givenAnswer = givenAnswers[givenAnswers.length - 1];
+
+                String givenAnswer = TCP.readAuthUsernameOrAnswer(st.inputStream);
+                assert givenAnswer != null;
                 if (!givenAnswer.equalsIgnoreCase(correctAnswer)) {
                     authRes.fail();
                     authRes.customMessage = "Wrong answer";
                     return authRes;
                 }
             } catch (SocketTimeoutException e) {
-
                 authRes.fail();
                 authRes.customMessage = "Timeout";
                 System.out.println("Closing connection due to timeout.");
@@ -109,12 +115,17 @@ public class Authentication {
                 return authRes;
             }
         }
+
         int token = (username + rand.nextInt()).hashCode();
         while (token < Math.pow(10, 6)) {
             token *= 10;
             token += rand.nextInt(10);
         }
-        authRes.customMessage = ("" + token).substring(0, 6);
+        String token_s = ("" + token).substring(0, 6);
+        authRes.customMessage = token_s;
+
+        Sessions.getInstance().newSession(st.socket.getRemoteSocketAddress(), username, token_s);
+
         return authRes;
 
     }

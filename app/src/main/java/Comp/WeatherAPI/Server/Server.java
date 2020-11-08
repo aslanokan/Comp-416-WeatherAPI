@@ -1,5 +1,6 @@
 package Comp.WeatherAPI.Server;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
@@ -12,10 +13,10 @@ public class Server {
     public Server(int port) {
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Oppened up a server socket on " + Inet4Address.getLocalHost());
+            System.out.println("Opened up a server socket on " + Inet4Address.getLocalHost() + ":" + port);
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Server class.Constructor exception on oppening a server socket");
+            System.err.println("Server class.Constructor exception on opening a server socket");
         }
         while (true) {
             ListenAndAccept();
