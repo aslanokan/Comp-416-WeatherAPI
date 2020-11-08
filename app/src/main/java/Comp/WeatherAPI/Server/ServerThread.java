@@ -44,10 +44,12 @@ class ServerThread extends Thread {
             TCP.writeAuthMessage(outputStream, authRes.result, authRes.customMessage); // Sending token or fail depends on auth
             //If auth successful, move on
             if (authenticated) {
+
                 //From now on we should only receive query requests
                 ServerSocket dataSocket = new ServerSocket(0); // Available random port
-                dataSocket.accept();
                 TCP.passDataSocketInfo(outputStream, dataSocket.getLocalPort());
+                dataSocket.accept();
+
                 System.out.println("A connection was established with a client on the address of " + socket.getRemoteSocketAddress());
                 // A while can be added here
                 String query = TCP.readQuery(inputStream);
