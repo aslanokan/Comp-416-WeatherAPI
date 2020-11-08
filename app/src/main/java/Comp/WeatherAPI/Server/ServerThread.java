@@ -45,24 +45,41 @@ class ServerThread extends Thread {
             //If auth successful, move on
             if (authenticated) {
 
+                Socket dataSocket;
                 //From now on we should only receive query requests
-                ServerSocket dataSocket = new ServerSocket(0); // Available random port
-                TCP.passDataSocketInfo(outputStream, dataSocket.getLocalPort());
-                dataSocket.accept();
+                ServerSocket dataServerSocket = new ServerSocket(0); // Available random port
+                TCP.passDataSocketInfo(outputStream, dataServerSocket.getLocalPort());
+                dataSocket = dataServerSocket.accept();
 
-                System.out.println("A connection was established with a client on the address of " + socket.getRemoteSocketAddress());
+                System.out.println("A data connection was established with client " + dataSocket.getRemoteSocketAddress() + " at port " + dataSocket.getLocalPort());
                 // A while can be added here
-                String query = TCP.readQuery(inputStream);
+                Query query = TCP.readQuery(inputStream);
+                if(query == null){
+                    outputStream.writeInt(-1);
+                }else{
+                    File response = query.sendQuery();
+                    outputStream.writeInt(response.hashCode());
+                    outputStream.flush();
+                    FileInputStream fileInputStream = new FileInputStream(response);
+                    byte[] fileData = new byte[(int) response.length()];
+                    fileInputStream.read(fileData);
+                    DataOutputStream dataOutputStream = new DataOutputStream(dataSocket.getOutputStream());
+                    dataOutputStream.write(fileData);
+                    dataOutputStream.flush();
+                    // outputStream.writeInt(response.hashCode()); Dosya adini yolla
 
+                }
 
             }
         } catch (IOException e) {
 
             System.err.println("Server Thread. Run. IO Error/ Client " + this.getName() + " terminated abruptly");
+            System.err.println(e);
         } catch (NullPointerException e) {
             System.err.println("Server Thread. Run.Client " + this.getName() + " Closed");
         } finally {
             try {
+                // TODO: End session
                 System.out.println("Closing the connection");
                 if (inputStream != null) {
                     inputStream.close();

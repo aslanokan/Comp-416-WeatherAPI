@@ -30,7 +30,7 @@ public class Sessions {
         return m.containsKey(token);
     }
 
-    public void endSession(String userName){
-        this.m.remove(userName);
+    public void endSession(String token){
+        this.m.remove(token);
     }
 }

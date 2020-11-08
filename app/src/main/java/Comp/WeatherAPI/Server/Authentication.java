@@ -9,7 +9,7 @@ import java.util.*;
 import static java.lang.Math.min;
 
 public class Authentication {
-    private static int MAX_QUESTIONS = 5;
+    private static int MAX_QUESTIONS = 1;
 
     private static Authentication authentication = null;
     private static int TIMEOUT = 20000;
@@ -95,7 +95,7 @@ public class Authentication {
             String correctAnswer = userDetails.get(question);
             try {
                 TCP.writeAuthMessage(st.outputStream, AuthenticationMessages.Auth_Challenge, question);
-                st.socket.setSoTimeout(TIMEOUT);
+                //st.socket.setSoTimeout(TIMEOUT);
 
                 String givenAnswer = TCP.readAuthUsernameOrAnswer(st.inputStream);
                 assert givenAnswer != null;
