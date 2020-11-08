@@ -62,6 +62,7 @@ public class TCP {
 
             } catch (IOException e) {
                 System.out.println("Waiting for query");
+                return null;
             }
 
         }
