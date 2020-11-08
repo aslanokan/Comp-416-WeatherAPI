@@ -10,7 +10,7 @@ public class FileUtils {
 
     public void saveData(Response response, String filename) {
         try {
-            FileOutputStream fos = new FileOutputStream(String.format("%s.png", filename));
+            FileOutputStream fos = new FileOutputStream(String.format("%s", filename));
             fos.write(response.body().bytes());
             fos.close();
         } catch (IOException e) {
@@ -20,7 +20,7 @@ public class FileUtils {
 
     public void saveJSON(String json, String filename) {
         try {
-            FileWriter myWriter = new FileWriter(String.format("%s.json", filename));
+            FileWriter myWriter = new FileWriter(String.format("%s", filename));
             myWriter.write(json);
             myWriter.close();
         } catch (IOException e) {

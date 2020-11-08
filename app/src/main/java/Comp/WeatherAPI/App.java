@@ -8,8 +8,4 @@ public class App {
         Dotenv dotenv = Dotenv.load();
         Server server = new Server(Integer.parseInt(dotenv.get("SERVER_PORT")));
     }
-
-    public String getGreeting() {
-        return "Hello World!";
-    }
 }
