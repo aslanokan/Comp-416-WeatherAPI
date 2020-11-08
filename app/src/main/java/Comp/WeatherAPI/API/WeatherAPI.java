@@ -47,12 +47,12 @@ public class WeatherAPI {
         }
     }
 
-    public Response getBasicWeatherMap(String layer, String z, String x, String y) {
+    public byte[] getBasicWeatherMap(String layer, String z, String x, String y) {
         String url = String.format("https://tile.openweathermap.org/map/%s/%s/%s/%s.png?appid=%s", layer, z, x, y, apiKey);
         try {
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
-            return response;
+            return response.body().bytes();
         } catch (IOException e) {
             System.out.println(e);
             return null;

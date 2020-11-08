@@ -25,7 +25,7 @@ public class Query {
             case 2:
                 return new File(API.getDailyForecast(params[0], params[1]));
             case 3:
-                return new File(API.getBasicWeatherMap(params[0], params[1], params[2], params[3]));
+//                return new File(API.getBasicWeatherMap(params[0], params[1], params[2], params[3]));
             case 4:
                 return new File(API.getMinuteForecast(params[0], params[1]));
             case 5:
