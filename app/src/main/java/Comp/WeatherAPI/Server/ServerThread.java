@@ -91,7 +91,6 @@ class ServerThread extends Thread {
             System.err.println("Server Thread. Run.Client " + this.getName() + " Closed");
         } finally {
             try {
-                // TODO: End session
                 System.out.println("Closing the connection");
                 if (inputStream != null) {
                     inputStream.close();
