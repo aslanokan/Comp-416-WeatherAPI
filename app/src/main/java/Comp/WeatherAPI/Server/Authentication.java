@@ -32,7 +32,7 @@ public class Authentication {
         username += ".txt";
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            File userFile = new File("users/" + username);
+            File userFile = new File(classLoader.getResource(username).getFile());
             return userFile.exists();
         } catch (NullPointerException e) {
             return false;

@@ -20,6 +20,7 @@ public class TCP {
         boolean valid = true;
         if(inputStream.readByte() != 0){
             // If not auth phase not valid
+            System.out.println("here");
             inputStream.readAllBytes();
             return null;
         }

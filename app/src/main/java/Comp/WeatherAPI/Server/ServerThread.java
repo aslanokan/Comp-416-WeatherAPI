@@ -18,6 +18,7 @@ class ServerThread extends Thread {
         this.socket = socket;
     }
 
+    // TODO: Server Thread. Run. IO Error/ Client Thread-1 terminated abruptly
     public void run() {
         try {
             inputStream = new DataInputStream(socket.getInputStream());
@@ -31,6 +32,7 @@ class ServerThread extends Thread {
             auth = Authentication.getInstance();
 
             String username = TCP.readAuthUsernameOrAnswer(inputStream);
+            System.out.println(username);
             assert username != null;
 
             if (!auth.validateUser(username)) {
@@ -44,7 +46,9 @@ class ServerThread extends Thread {
             if (authenticated) {
                 //From now on we should only receive query requests
                 ServerSocket dataSocket = new ServerSocket(0); // Available random port
+                dataSocket.accept();
                 TCP.passDataSocketInfo(outputStream, dataSocket.getLocalPort());
+                System.out.println("A connection was established with a client on the address of " + socket.getRemoteSocketAddress());
                 // A while can be added here
                 String query = TCP.readQuery(inputStream);
 
