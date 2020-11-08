@@ -33,39 +33,36 @@ public class TCP {
         return new String(inputStream.readNBytes(payload_size));
     }
 
-    public static Query readQuery(DataInputStream inputStream){
+    public static Query readQuery(DataInputStream inputStream) throws IOException {
 
-        while(true){
-            try {
-                if(inputStream.readByte() != 1){
-                    // If not query phase not valid
-                    int rem = inputStream.available();
-                    inputStream.skipBytes(rem);
-                    return null;
-                }
-                if(!Authentication.getInstance().validateSession(Integer.toString(inputStream.readInt()))){
-                    int rem = inputStream.available();
-                    inputStream.skipBytes(rem);
-                    return null;
-                }
-                int type = inputStream.readByte();
-                if(type != 1 && type != 2 && type != 3 && type != 4 && type != 5){
-                    // If not auth request not valid
-                    int rem = inputStream.available();
-                    inputStream.skipBytes(rem);
-                    return null;
-                }
-                int payload_size = inputStream.readInt();
-                String payload = new String(inputStream.readNBytes(payload_size));
-
-                return new Query(type, payload);
-
-            } catch (IOException e) {
-                System.out.println("Waiting for query");
+        try {
+            if(inputStream.readByte() != 1){
+                // If not query phase not valid
+                int rem = inputStream.available();
+                inputStream.skipBytes(rem);
                 return null;
             }
+            if(!Authentication.getInstance().validateSession(Integer.toString(inputStream.readInt()))){
+                int rem = inputStream.available();
+                inputStream.skipBytes(rem);
+                return null;
+            }
+            int type = inputStream.readByte();
+            if(type != 1 && type != 2 && type != 3 && type != 4 && type != 5){
+                // If not auth request not valid
+                int rem = inputStream.available();
+                inputStream.skipBytes(rem);
+                return null;
+            }
+            int payload_size = inputStream.readInt();
+            String payload = new String(inputStream.readNBytes(payload_size));
 
+            return new Query(type, payload);
+
+        } catch (IOException e) {
+            throw e;
         }
+
     }
 
     public static void passDataSocketInfo(DataOutputStream outputStream, int localPort) throws IOException {

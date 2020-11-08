@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.time.Instant;
 import java.util.Arrays;
 
 class ServerThread extends Thread {
@@ -15,7 +16,7 @@ class ServerThread extends Thread {
     protected Socket socket;
     private String lines = "";
     private Authentication auth;
-    private static final int DATA_TIMEOUT=60000;//1 minute timeout
+    private static final int DATA_TIMEOUT=120000;//2 minute timeout
 
     public ServerThread(Socket socket) {
         this.socket = socket;
@@ -47,7 +48,7 @@ class ServerThread extends Thread {
             TCP.writeAuthMessage(outputStream, authRes.result, authRes.customMessage); // Sending token or fail depends on auth
             //If auth successful, move on
             if (authenticated) {
-
+                socket.setSoTimeout(DATA_TIMEOUT);
                 Socket dataSocket;
                 //From now on we should only receive query requests
                 ServerSocket dataServerSocket = new ServerSocket(0); // Available random port
@@ -57,28 +58,29 @@ class ServerThread extends Thread {
 
                 System.out.println("A data connection was established with client " + dataSocket.getRemoteSocketAddress() + " at port " + dataSocket.getLocalPort());
                 // A while can be added here
-//                try {
-                    while (true) {
+                while (true) {
+                    try{
                         Query query = TCP.readQuery(inputStream);
-//                        socket.setSoTimeout(DATA_TIMEOUT); //TODO:
                         if (query == null) {
                             outputStream.writeInt(-1);
                         } else {
                             byte[] fileData = query.sendQuery();
                             outputStream.writeInt(Arrays.hashCode(fileData));
+                            outputStream.writeLong(System.currentTimeMillis());
                             outputStream.flush();
 
                             dataOutputStream.writeInt(fileData.length);
                             dataOutputStream.write(fileData);
                             dataOutputStream.flush();
-                            // outputStream.writeInt(fileData.hashCode()); Dosya adini yolla
-
+                            if(inputStream.readInt() == "Yes".hashCode()){
+                                System.out.println("File transmitted successfully!");
+                            }else System.err.println("Error occured during transmission");
                         }
+                    }catch (SocketTimeoutException e){
+                        System.err.println("Timeout for query: " + e);
+                        break;
                     }
-//                }
-//                catch (SocketTimeoutException e) {
-
-//                }
+                }
 
             }
         } catch (IOException e) {
